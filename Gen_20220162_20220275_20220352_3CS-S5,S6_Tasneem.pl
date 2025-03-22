@@ -31,8 +31,6 @@ playersInTeam(Team, Ans, TempL):-
 	playersInTeam(Team, NewAns, TempL).
 	
 playersInTeam(_, L, L).
-
-	
 	
 %TASK2 - Count how many teams are from a specific country
 teams_in_country(Country, L):-
@@ -85,3 +83,38 @@ num_matches_of_team(Team, N) :-
 top_scorer(Player) :-
     goals(Player, Mxgoals),
     \+ (goals(_, Goal), Goal > Mxgoals), !.
+	
+%TASK7 - Find the Most Common Position in a Specific Team
+players_in_team(Team, Players) :-
+    collect_players(Team, [], Players).
+
+collect_players(Team, Acc, Players) :-
+    player(Player, Team, Position),
+    \+ my_member((Player, Position), Acc),
+    collect_players(Team, [(Player, Position) | Acc], Players).
+collect_players(_, Players, Players).
+
+count_positions([], _, 0).
+count_positions([(_, Position) | Rest], Position, Count) :-
+    count_positions(Rest, Position, RestCount),
+    Count is RestCount + 1.
+count_positions([(_, OtherPosition) | Rest], Position, Count) :-
+    OtherPosition \= Position,
+    count_positions(Rest, Position, Count).
+
+positions_count_list(Team, List) :-
+    players_in_team(Team, Players),
+    collect_positions(Players, [], List).
+
+collect_positions([], List, List).
+collect_positions([(Player, Position) | Rest], Acc, List) :-
+    \+ my_member((Position, _), Acc),
+    count_positions([(Player, Position) | Rest], Position, Count),
+    collect_positions(Rest, [(Position, Count) | Acc], List).
+collect_positions([(_, _) | Rest], Acc, List) :-
+    collect_positions(Rest, Acc, List).
+
+most_common_position_in_team(Team, Pos):-
+	positions_count_list(Team, List),
+	my_member((Pos, Count), List),
+	\+ (my_member((_, OtherCount), List), OtherCount > Count), !.
