@@ -85,7 +85,7 @@ top_scorer(Player) :-
     \+ (goals(_, Goal), Goal > Mxgoals), !.
 	
 %TASK7 - Find the Most Common Position in a Specific Team
-players_in_team(Team, Players) :-
+players_in_team_list(Team, Players) :-
     collect_players(Team, [], Players).
 
 collect_players(Team, Acc, Players) :-
@@ -103,7 +103,7 @@ count_positions([(_, OtherPosition) | Rest], Position, Count) :-
     count_positions(Rest, Position, Count).
 
 positions_count_list(Team, List) :-
-    players_in_team(Team, Players),
+    players_in_team_list(Team, Players),
     collect_positions(Players, [], List).
 
 collect_positions([], List, List).
